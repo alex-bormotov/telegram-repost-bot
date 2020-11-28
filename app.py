@@ -37,7 +37,7 @@ async def main():
         return msg
 
     for c in CHANNELS:
-        await asyncio.sleep(10)
+        await asyncio.sleep(60)
         # channel = await client.get_entity(f'@{c}')
         channel = await client(ResolveUsernameRequest(c))
         messages = await client.get_messages(channel, limit=1)
@@ -67,7 +67,7 @@ while True:
     try:
         loop = asyncio.get_event_loop()
         loop.run_until_complete(main())
-        sleep(300)
+        sleep(3600)
         print('RUN AGAIN')
     except Exception as e:
         print(str(e))
