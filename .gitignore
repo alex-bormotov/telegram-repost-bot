@@ -132,3 +132,4 @@ config.json
 Untitled.ipynb
 config/channels.json
 config/search_words.json
+config/excluded_words.json
