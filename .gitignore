@@ -127,9 +127,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-my_session.session
-config.json
-Untitled.ipynb
-config/channels.json
-config/search_words.json
-config/excluded_words.json
