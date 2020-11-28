@@ -6,12 +6,15 @@ from fs import read_json
 from datetime import datetime
 from telethon import TelegramClient
 from telethon.tl import functions, types
-from telethon.tl.functions.contacts import ResolveUsernameRequest
+from send_to_telegram_api import telegram_send_message
+# from telethon.tl.functions.contacts import ResolveUsernameRequest
 
 CONFIG = read_json('config/config.json')
+BOT_API = CONFIG['bot_api_key']
+CHANNEL_CHAT_ID = CONFIG['chat_id']
 CHANNELS = read_json('config/channels.json')['channels']
-words = read_json('config/search_words.json')['words']
-excluded_words = read_json('config/excluded_words.json')['excluded']
+WORDS = read_json('config/search_words.json')['words']
+WORDS_EXCLUDED = read_json('config/excluded_words.json')['excluded']
 
 LAST_RUN_DATE = None
 
@@ -38,8 +41,9 @@ async def main():
 
     for c in CHANNELS:
         await asyncio.sleep(60)
-        # channel = await client.get_entity(f'@{c}')
-        channel = await client(ResolveUsernameRequest(c))
+        # NEED WAY TO SAVE IT AND GETTING ONLY MESSAGES IN FUTURE, NOT ENTITY!!!
+        channel = await client.get_entity(f'@{c}')
+        # channel = await client(ResolveUsernameRequest(c))
         messages = await client.get_messages(channel, limit=1)
 
         last_msg_id = 0
@@ -47,8 +51,8 @@ async def main():
         if len(messages) > 0:
             for x in messages:
                 if x.text is not None:
-                    for w in words:
-                        for ex_w in excluded_words:
+                    for w in WORDS:
+                        for ex_w in WORDS_EXCLUDED:
                             if w in x.message and ex_w not in x.message:
                                 if last_msg_id == 0 or last_msg_id != x.id:
                                     if x.date.replace(tzinfo=None) >= LAST_RUN_DATE:
@@ -59,8 +63,7 @@ async def main():
     LAST_RUN_DATE = datetime.utcnow()
     for fm in filtered_msg:
         print(fm)
-
-    print(len(filtered_msg))
+        telegram_send_message(BOT_API, CHANNEL_CHAT_ID, fm)
 
 
 while True:
