@@ -6,6 +6,7 @@ from fs import read_json
 from datetime import datetime
 from telethon import TelegramClient
 from telethon.tl import functions, types
+from telethon.tl.functions.contacts import ResolveUsernameRequest
 
 CONFIG = read_json('config/config.json')
 CHANNELS = read_json('config/channels.json')['channels']
@@ -36,8 +37,9 @@ async def main():
         return msg
 
     for c in CHANNELS:
-        await asyncio.sleep(1)
-        channel = await client.get_entity(f'@{c}')
+        await asyncio.sleep(10)
+        # channel = await client.get_entity(f'@{c}')
+        channel = await client(ResolveUsernameRequest(c))
         messages = await client.get_messages(channel, limit=1)
 
         last_msg_id = 0
@@ -65,7 +67,7 @@ while True:
     try:
         loop = asyncio.get_event_loop()
         loop.run_until_complete(main())
-        sleep(60)
+        sleep(300)
         print('RUN AGAIN')
     except Exception as e:
         print(str(e))
