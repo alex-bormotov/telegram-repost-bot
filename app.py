@@ -76,7 +76,7 @@ while True:
         print('RUN First')
         loop = asyncio.get_event_loop()
         loop.run_until_complete(main())
-        sleep(3600)
+        sleep(360)
         print('RUN AGAIN')
     except Exception as e:
         print(str(e))
