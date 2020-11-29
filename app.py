@@ -15,6 +15,7 @@ WORDS = read_json('config/search_words.json')['words']
 WORDS_EXCLUDED = read_json('config/excluded_words.json')['excluded']
 
 LAST_RUN_DATE = None
+IS_FIRST_RUN = True
 
 client = TelegramClient('my_session', CONFIG['app_id'], CONFIG['app_hash'])
 client.start()
@@ -25,6 +26,7 @@ CHANNELS_ENTITY = []
 async def main():
     global LAST_RUN_DATE
     global CHANNELS_ENTITY
+    global IS_FIRST_RUN
 
     if LAST_RUN_DATE is None:
         LAST_RUN_DATE = datetime.utcnow()
@@ -44,8 +46,6 @@ async def main():
         for ch in CHANNELS:
             channel = await client.get_entity(f'@{ch}')
             CHANNELS_ENTITY.append(channel)
-            print(len(CHANNELS_ENTITY))
-            print(CHANNELS_ENTITY[-1])
             await asyncio.sleep(5)
 
     for c in CHANNELS_ENTITY:
@@ -59,19 +59,21 @@ async def main():
                         for ex_w in WORDS_EXCLUDED:
                             if w in x.message and ex_w not in x.message:
                                 if last_msg_id == 0 or last_msg_id != x.id:
-                                    if x.date.replace(tzinfo=None) >= LAST_RUN_DATE:
+                                    if x.date.replace(tzinfo=None) >= LAST_RUN_DATE or IS_FIRST_RUN:
                                         filtered_msg.append([x.id, datetime.strftime(
                                             x.date, '%m-%d-%Y %H:%M:%S'), format_msg(x.text)])
                                         last_msg_id = x.id
 
     LAST_RUN_DATE = datetime.utcnow()
+    IS_FIRST_RUN = False
     for fm in filtered_msg:
-        print(fm)
-        # telegram_send_message(BOT_API, CHANNEL_CHAT_ID, fm)
+        # print(fm)
+        telegram_send_message(BOT_API, CHANNEL_CHAT_ID, fm)
 
 
 while True:
     try:
+        print('RUN First')
         loop = asyncio.get_event_loop()
         loop.run_until_complete(main())
         sleep(3600)
