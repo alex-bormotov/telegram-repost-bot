@@ -1,5 +1,4 @@
 import re
-import pytz
 import asyncio
 from time import sleep
 from fs import read_json
@@ -7,7 +6,6 @@ from datetime import datetime
 from telethon import TelegramClient
 from telethon.tl import functions, types
 from send_to_telegram_api import telegram_send_message
-# from telethon.tl.functions.contacts import ResolveUsernameRequest
 
 CONFIG = read_json('config/config.json')
 BOT_API = CONFIG['bot_api_key']
@@ -21,9 +19,12 @@ LAST_RUN_DATE = None
 client = TelegramClient('my_session', CONFIG['app_id'], CONFIG['app_hash'])
 client.start()
 
+CHANNELS_ENTITY = []
+
 
 async def main():
     global LAST_RUN_DATE
+    global CHANNELS_ENTITY
 
     if LAST_RUN_DATE is None:
         LAST_RUN_DATE = datetime.utcnow()
@@ -39,15 +40,18 @@ async def main():
             msg = msg[:msg.find('\n—————————\n')]
         return msg
 
-    for c in CHANNELS:
-        await asyncio.sleep(60)
-        # NEED WAY TO SAVE IT AND GETTING ONLY MESSAGES IN FUTURE, NOT ENTITY!!!
-        channel = await client.get_entity(f'@{c}')
-        # channel = await client(ResolveUsernameRequest(c))
-        messages = await client.get_messages(channel, limit=1)
+    if len(CHANNELS_ENTITY) == 0:
+        for ch in CHANNELS:
+            channel = await client.get_entity(f'@{ch}')
+            CHANNELS_ENTITY.append(channel)
+            print(len(CHANNELS_ENTITY))
+            print(CHANNELS_ENTITY[-1])
+            await asyncio.sleep(5)
 
+    for c in CHANNELS_ENTITY:
+        await asyncio.sleep(5)
+        messages = await client.get_messages(c, limit=1)
         last_msg_id = 0
-
         if len(messages) > 0:
             for x in messages:
                 if x.text is not None:
@@ -63,7 +67,7 @@ async def main():
     LAST_RUN_DATE = datetime.utcnow()
     for fm in filtered_msg:
         print(fm)
-        telegram_send_message(BOT_API, CHANNEL_CHAT_ID, fm)
+        # telegram_send_message(BOT_API, CHANNEL_CHAT_ID, fm)
 
 
 while True:
