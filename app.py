@@ -60,8 +60,7 @@ async def main():
                             if w in x.message and ex_w not in x.message:
                                 if last_msg_id == 0 or last_msg_id != x.id:
                                     if x.date.replace(tzinfo=None) >= LAST_RUN_DATE or IS_FIRST_RUN:
-                                        filtered_msg.append([x.id, datetime.strftime(
-                                            x.date, '%m-%d-%Y %H:%M:%S'), format_msg(x.text)])
+                                        filtered_msg.append(format_msg(x.text))
                                         last_msg_id = x.id
 
     LAST_RUN_DATE = datetime.utcnow()
