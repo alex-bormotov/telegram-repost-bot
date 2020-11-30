@@ -56,8 +56,15 @@ async def main():
             for x in messages:
                 if x.text is not None:
                     for w in WORDS:
-                        for ex_w in WORDS_EXCLUDED:
-                            if w in x.message and ex_w not in x.message:
+                        if len(WORDS_EXCLUDED) > 0:
+                            for ex_w in WORDS_EXCLUDED:
+                                if w in x.message and ex_w not in x.message:
+                                    if last_msg_id == 0 or last_msg_id != x.id:
+                                        if x.date.replace(tzinfo=None) >= LAST_RUN_DATE or IS_FIRST_RUN:
+                                            filtered_msg.append(format_msg(x.text))
+                                            last_msg_id = x.id
+                        else:
+                            if w in x.message:
                                 if last_msg_id == 0 or last_msg_id != x.id:
                                     if x.date.replace(tzinfo=None) >= LAST_RUN_DATE or IS_FIRST_RUN:
                                         filtered_msg.append(format_msg(x.text))
@@ -66,7 +73,6 @@ async def main():
     LAST_RUN_DATE = datetime.utcnow()
     IS_FIRST_RUN = False
     for fm in filtered_msg:
-        # print(fm)
         telegram_send_message(BOT_API, CHANNEL_CHAT_ID, fm)
 
 
