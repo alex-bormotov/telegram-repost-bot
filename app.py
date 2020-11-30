@@ -70,10 +70,15 @@ async def main():
         telegram_send_message(BOT_API, CHANNEL_CHAT_ID, fm)
 
 
-while True:
-    try:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(main())
-        sleep(360)
-    except Exception as e:
-        print(str(e))
+def start():
+    while True:
+        try:
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(main())
+            sleep(600)
+        except Exception as e:
+            print(str(e))
+
+
+if __name__ == "__main__":
+    main()
