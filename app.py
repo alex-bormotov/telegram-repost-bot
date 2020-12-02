@@ -10,9 +10,15 @@ from send_to_telegram_api import telegram_send_message
 CONFIG = read_json('config/config.json')
 BOT_API = CONFIG['bot_api_key']
 CHANNEL_CHAT_ID = CONFIG['chat_id']
+
+
 CHANNELS = read_json('config/channels.json')['channels']
+
 WORDS = read_json('config/search_words.json')['words']
 WORDS_EXCLUDED = read_json('config/excluded_words.json')['excluded']
+
+WORDS_2 = read_json('config/search_words.json')['words_2']
+WORDS_EXCLUDED_2 = read_json('config/excluded_words.json')['excluded_2']
 
 LAST_RUN_DATE = None
 IS_FIRST_RUN = True
@@ -61,7 +67,8 @@ async def main():
                                 if w in x.message and ex_w not in x.message:
                                     if last_msg_id == 0 or last_msg_id != x.id:
                                         if x.date.replace(tzinfo=None) >= LAST_RUN_DATE or IS_FIRST_RUN:
-                                            filtered_msg.append(format_msg(x.text))
+                                            filtered_msg.append(
+                                                format_msg(x.text))
                                             last_msg_id = x.id
                         else:
                             if w in x.message:
