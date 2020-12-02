@@ -2,5 +2,9 @@
     "app_id": 2662250,
     "app_hash": "7775e080e3dbdea48b5770b6a4e85c8e",
     "chat_id": -1001233057797,
-    "chat_id_2": -1001354667621
+    "chat_id_2": -1001354667621,
+    "channel_1_ebabled": "yes",
+    "channel_2_ebabled": "yes",
+    "enabled_filtering": "yes",
+    "sleep_timeout_seconds": 60
 }
