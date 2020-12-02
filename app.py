@@ -89,10 +89,8 @@ async def main():
                         else:
                             if message.date.replace(tzinfo=None) >= LAST_RUN_DATE or FIRST_RUN:
                                 await client.forward_messages(CHANNEL_CHAT_ID, message, c)
-
     FIRST_RUN = False
     LAST_RUN_DATE = datetime.utcnow()
-    print('dddd')
 
 
 def start():
