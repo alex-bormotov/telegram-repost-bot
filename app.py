@@ -22,7 +22,8 @@ WORDS_EXCLUDED = WORDS_CONFIG['excluded']
 WORDS_2 = WORDS_CONFIG['words_2']
 WORDS_EXCLUDED_2 = WORDS_CONFIG['excluded_2']
 
-FIRST_RUN = True
+# FIRST_RUN = True # If True the Bot will posts a few "initial messages"
+FIRST_RUN = False # If False you will able to restart the bot "smoothly"
 LAST_RUN_DATE = None
 
 
