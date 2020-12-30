@@ -1,2 +1,4 @@
 requests==2.25.0
+pymorphy2==0.8
+spacy==2.3.5
 Telethon==1.17.5
