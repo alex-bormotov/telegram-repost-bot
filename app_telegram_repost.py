@@ -58,6 +58,21 @@ async def main():
     if LAST_RUN_DATE is None:
         LAST_RUN_DATE = datetime.utcnow()
 
+    if ENABLED_FILTERING == 'yes':
+        # global_pattern = re.compile('|'.join(GLOBAL_WORDS), re.IGNORECASE)
+
+        if CHANNEL_1_ENABLED == 'yes':
+            # include_pattern = re.compile('|'.join(WORDS), re.IGNORECASE)
+            if len(PHRASES_EXCLUDED) != 0:
+                exclude_pattern = re.compile(
+                    '|'.join(PHRASES_EXCLUDED), re.IGNORECASE)
+
+        # if CHANNEL_1_ENABLED == 'yes':
+        #     include_pattern_2 = re.compile('|'.join(WORDS_2), re.IGNORECASE)
+        #     if len(WORDS_EXCLUDED_2) != 0:
+        #         exclude_pattern_2 = re.compile(
+        #             '|'.join(WORDS_EXCLUDED_2), re.IGNORECASE)
+
     for c in CHANNELS:
         await asyncio.sleep(5)
         messages = await client.get_messages(c, limit=100)
@@ -72,8 +87,13 @@ async def main():
                             sentence = nlp(message.text)
                             matched_phrases = phrase_matcher(sentence)
                             if len(matched_phrases) > 0:
-                                if message.date.replace(tzinfo=None) >= LAST_RUN_DATE or FIRST_RUN:
-                                    await client.forward_messages(CHANNEL_CHAT_ID, message, c)
+                                if len(PHRASES_EXCLUDED) != 0:
+                                    if not bool(exclude_pattern.search(message.text)):
+                                        if message.date.replace(tzinfo=None) >= LAST_RUN_DATE or FIRST_RUN:
+                                            await client.forward_messages(CHANNEL_CHAT_ID, message, c)
+                                    if len(PHRASES_EXCLUDED) == 0:
+                                        if message.date.replace(tzinfo=None) >= LAST_RUN_DATE or FIRST_RUN:
+                                            await client.forward_messages(CHANNEL_CHAT_ID, message, c)
                         else:
                             if message.date.replace(tzinfo=None) >= LAST_RUN_DATE or FIRST_RUN:
                                 await client.forward_messages(CHANNEL_CHAT_ID, message, c)
