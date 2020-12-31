@@ -37,23 +37,19 @@ PHRASES_EXCLUDED_2 = PHRASES_CONFIG['excluded_2']
 FIRST_RUN = False  # If False you will able to restart the bot "smoothly"
 LAST_RUN_DATE = None
 
-
 client = TelegramClient('my_session', CONFIG['app_id'], CONFIG['app_hash'])
 client.start()
 
-
 nlp = Russian()
-phrase_matcher = PhraseMatcher(nlp.vocab, attr='LOWER')
-
-phrases = GLOBAL_PHRASES
-
-patterns = [nlp(text) for text in phrases]
-phrase_matcher.add('AI', None, *patterns)
 
 
 async def main():
     global FIRST_RUN
     global LAST_RUN_DATE
+
+    phrase_matcher = PhraseMatcher(nlp.vocab, attr='LOWER')
+    patterns = [nlp(text) for text in GLOBAL_PHRASES]
+    phrase_matcher.add('AI', None, *patterns)
 
     if LAST_RUN_DATE is None:
         LAST_RUN_DATE = datetime.utcnow()
@@ -62,10 +58,14 @@ async def main():
         # global_pattern = re.compile('|'.join(GLOBAL_WORDS), re.IGNORECASE)
 
         if CHANNEL_1_ENABLED == 'yes':
-            # include_pattern = re.compile('|'.join(WORDS), re.IGNORECASE)
-            if len(PHRASES_EXCLUDED) != 0:
-                exclude_pattern = re.compile(
-                    '|'.join(PHRASES_EXCLUDED), re.IGNORECASE)
+            # # include_pattern = re.compile('|'.join(WORDS), re.IGNORECASE)
+            # if len(PHRASES_EXCLUDED) != 0:
+            #     exclude_pattern = re.compile(
+            #         '|'.join(PHRASES_EXCLUDED), re.IGNORECASE)
+            if len(PHRASES_EXCLUDED) > 0:
+                exclude_patterns = [nlp(text_2) for text_2 in PHRASES_EXCLUDED]
+                exclude_phrase_matcher = PhraseMatcher(nlp.vocab, attr='LOWER')
+                exclude_phrase_matcher.add('AI_EX', None, *exclude_patterns)
 
         # if CHANNEL_1_ENABLED == 'yes':
         #     include_pattern_2 = re.compile('|'.join(WORDS_2), re.IGNORECASE)
@@ -87,13 +87,15 @@ async def main():
                             sentence = nlp(message.text)
                             matched_phrases = phrase_matcher(sentence)
                             if len(matched_phrases) > 0:
-                                if len(PHRASES_EXCLUDED) != 0:
-                                    if not bool(exclude_pattern.search(message.text)):
+                                if len(PHRASES_EXCLUDED) > 0:
+                                    exclude_matched_phrases = exclude_phrase_matcher(
+                                        sentence)
+                                    if len(exclude_matched_phrases) == 0:
                                         if message.date.replace(tzinfo=None) >= LAST_RUN_DATE or FIRST_RUN:
                                             await client.forward_messages(CHANNEL_CHAT_ID, message, c)
-                                    if len(PHRASES_EXCLUDED) == 0:
-                                        if message.date.replace(tzinfo=None) >= LAST_RUN_DATE or FIRST_RUN:
-                                            await client.forward_messages(CHANNEL_CHAT_ID, message, c)
+                                if len(PHRASES_EXCLUDED) == 0:
+                                    if message.date.replace(tzinfo=None) >= LAST_RUN_DATE or FIRST_RUN:
+                                        await client.forward_messages(CHANNEL_CHAT_ID, message, c)
                         else:
                             if message.date.replace(tzinfo=None) >= LAST_RUN_DATE or FIRST_RUN:
                                 await client.forward_messages(CHANNEL_CHAT_ID, message, c)
