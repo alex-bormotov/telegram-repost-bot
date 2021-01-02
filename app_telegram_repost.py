@@ -42,30 +42,22 @@ client.start()
 
 nlp = Russian()
 
+phrase_matcher = PhraseMatcher(nlp.vocab, attr='LOWER')
+patterns = [nlp(text) for text in GLOBAL_PHRASES]
+phrase_matcher.add('AI', None, *patterns)
 
-async def main():
-    global FIRST_RUN
-    global LAST_RUN_DATE
+if ENABLED_FILTERING == 'yes':
+    # global_pattern = re.compile('|'.join(GLOBAL_WORDS), re.IGNORECASE)
 
-    phrase_matcher = PhraseMatcher(nlp.vocab, attr='LOWER')
-    patterns = [nlp(text) for text in GLOBAL_PHRASES]
-    phrase_matcher.add('AI', None, *patterns)
-
-    if LAST_RUN_DATE is None:
-        LAST_RUN_DATE = datetime.utcnow()
-
-    if ENABLED_FILTERING == 'yes':
-        # global_pattern = re.compile('|'.join(GLOBAL_WORDS), re.IGNORECASE)
-
-        if CHANNEL_1_ENABLED == 'yes':
-            # # include_pattern = re.compile('|'.join(WORDS), re.IGNORECASE)
-            # if len(PHRASES_EXCLUDED) != 0:
-            #     exclude_pattern = re.compile(
-            #         '|'.join(PHRASES_EXCLUDED), re.IGNORECASE)
-            if len(PHRASES_EXCLUDED) > 0:
-                exclude_patterns = [nlp(text_2) for text_2 in PHRASES_EXCLUDED]
-                exclude_phrase_matcher = PhraseMatcher(nlp.vocab, attr='LOWER')
-                exclude_phrase_matcher.add('AI_EX', None, *exclude_patterns)
+    if CHANNEL_1_ENABLED == 'yes':
+        # # include_pattern = re.compile('|'.join(WORDS), re.IGNORECASE)
+        # if len(PHRASES_EXCLUDED) != 0:
+        #     exclude_pattern = re.compile(
+        #         '|'.join(PHRASES_EXCLUDED), re.IGNORECASE)
+        if len(PHRASES_EXCLUDED) > 0:
+            exclude_patterns = [nlp(text_2) for text_2 in PHRASES_EXCLUDED]
+            exclude_phrase_matcher = PhraseMatcher(nlp.vocab, attr='LOWER')
+            exclude_phrase_matcher.add('AI_EX', None, *exclude_patterns)
 
         # if CHANNEL_1_ENABLED == 'yes':
         #     include_pattern_2 = re.compile('|'.join(WORDS_2), re.IGNORECASE)
@@ -73,9 +65,17 @@ async def main():
         #         exclude_pattern_2 = re.compile(
         #             '|'.join(WORDS_EXCLUDED_2), re.IGNORECASE)
 
+
+async def main():
+    global FIRST_RUN
+    global LAST_RUN_DATE
+
+    if LAST_RUN_DATE is None:
+        LAST_RUN_DATE = datetime.utcnow()
+
     for c in CHANNELS:
         await asyncio.sleep(5)
-        messages = await client.get_messages(c, limit=100)
+        messages = await client.get_messages(c, limit=20)
 
         if len(messages) > 0:
             for message in messages:
