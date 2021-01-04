@@ -83,7 +83,7 @@ async def main():
 
     for c in CHANNELS:
         await asyncio.sleep(5)
-        messages = await client.get_messages(c, limit=100)
+        messages = await client.get_messages(c, limit=20)
 
         if len(messages) > 0:
             for message in messages:
@@ -95,12 +95,13 @@ async def main():
 
                             sentence = nlp(message.text)
 
-                            global_matched_phrases = global_phrase_matcher(sentence)
+                            global_matched_phrases = global_phrase_matcher(
+                                sentence)
                             if len(global_matched_phrases) > 0:
 
                                 if len(PHRASES) > 0:
                                     matched_phrases = phrase_matcher(sentence)
-                                    
+
                                     if len(matched_phrases) > 0:
                                         if len(PHRASES_EXCLUDED) > 0:
                                             exclude_matched_phrases = exclude_phrase_matcher(
