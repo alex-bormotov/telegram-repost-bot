@@ -42,9 +42,17 @@ client.start()
 
 nlp = Russian()
 
-phrase_matcher = PhraseMatcher(nlp.vocab, attr='LOWER')
-patterns = [nlp(text) for text in GLOBAL_PHRASES]
-phrase_matcher.add('AI', None, *patterns)
+if len(GLOBAL_PHRASES) > 0:
+    global_phrase_matcher = PhraseMatcher(nlp.vocab, attr='LOWER')
+    global_patterns = [nlp(text) for text in GLOBAL_PHRASES]
+    global_phrase_matcher.add('AI_G', None, *global_patterns)
+
+
+if len(PHRASES) > 0:
+    phrase_matcher = PhraseMatcher(nlp.vocab, attr='LOWER')
+    patterns = [nlp(text_p) for text_p in PHRASES]
+    phrase_matcher.add('AI', None, *patterns)
+
 
 if ENABLED_FILTERING == 'yes':
     # global_pattern = re.compile('|'.join(GLOBAL_WORDS), re.IGNORECASE)
@@ -75,7 +83,7 @@ async def main():
 
     for c in CHANNELS:
         await asyncio.sleep(5)
-        messages = await client.get_messages(c, limit=20)
+        messages = await client.get_messages(c, limit=100)
 
         if len(messages) > 0:
             for message in messages:
@@ -84,18 +92,37 @@ async def main():
                     # First channel
                     if CHANNEL_1_ENABLED == 'yes':
                         if ENABLED_FILTERING == 'yes':
+
                             sentence = nlp(message.text)
-                            matched_phrases = phrase_matcher(sentence)
-                            if len(matched_phrases) > 0:
-                                if len(PHRASES_EXCLUDED) > 0:
-                                    exclude_matched_phrases = exclude_phrase_matcher(
-                                        sentence)
-                                    if len(exclude_matched_phrases) == 0:
+
+                            global_matched_phrases = global_phrase_matcher(sentence)
+                            if len(global_matched_phrases) > 0:
+
+                                if len(PHRASES) > 0:
+                                    matched_phrases = phrase_matcher(sentence)
+                                    
+                                    if len(matched_phrases) > 0:
+                                        if len(PHRASES_EXCLUDED) > 0:
+                                            exclude_matched_phrases = exclude_phrase_matcher(
+                                                sentence)
+                                            if len(exclude_matched_phrases) == 0:
+                                                if message.date.replace(tzinfo=None) >= LAST_RUN_DATE or FIRST_RUN:
+                                                    await client.forward_messages(CHANNEL_CHAT_ID, message, c)
+                                        if len(PHRASES_EXCLUDED) == 0:
+                                            if message.date.replace(tzinfo=None) >= LAST_RUN_DATE or FIRST_RUN:
+                                                await client.forward_messages(CHANNEL_CHAT_ID, message, c)
+
+                                if len(PHRASES) == 0:
+                                    if len(PHRASES_EXCLUDED) > 0:
+                                        exclude_matched_phrases = exclude_phrase_matcher(
+                                            sentence)
+                                        if len(exclude_matched_phrases) == 0:
+                                            if message.date.replace(tzinfo=None) >= LAST_RUN_DATE or FIRST_RUN:
+                                                await client.forward_messages(CHANNEL_CHAT_ID, message, c)
+                                    if len(PHRASES_EXCLUDED) == 0:
                                         if message.date.replace(tzinfo=None) >= LAST_RUN_DATE or FIRST_RUN:
                                             await client.forward_messages(CHANNEL_CHAT_ID, message, c)
-                                if len(PHRASES_EXCLUDED) == 0:
-                                    if message.date.replace(tzinfo=None) >= LAST_RUN_DATE or FIRST_RUN:
-                                        await client.forward_messages(CHANNEL_CHAT_ID, message, c)
+
                         else:
                             if message.date.replace(tzinfo=None) >= LAST_RUN_DATE or FIRST_RUN:
                                 await client.forward_messages(CHANNEL_CHAT_ID, message, c)
