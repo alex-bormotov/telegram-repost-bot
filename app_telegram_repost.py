@@ -33,8 +33,8 @@ PHRASES_EXCLUDED = PHRASES_CONFIG['excluded']
 PHRASES_2 = PHRASES_CONFIG['phrases_2']
 PHRASES_EXCLUDED_2 = PHRASES_CONFIG['excluded_2']
 
-# FIRST_RUN = True # If True the Bot will posts a few "initial messages"
-FIRST_RUN = False  # If False you will able to restart the bot "smoothly"
+FIRST_RUN = True  # If True the Bot will posts a few "initial messages"
+# FIRST_RUN = False  # If False you will able to restart the bot "smoothly"
 LAST_RUN_DATE = None
 
 client = TelegramClient('my_session', CONFIG['app_id'], CONFIG['app_hash'])
@@ -97,6 +97,7 @@ async def main():
 
                             global_matched_phrases = global_phrase_matcher(
                                 sentence)
+
                             if len(global_matched_phrases) > 0:
 
                                 if len(PHRASES) > 0:
@@ -106,9 +107,12 @@ async def main():
                                         if len(PHRASES_EXCLUDED) > 0:
                                             exclude_matched_phrases = exclude_phrase_matcher(
                                                 sentence)
+
                                             if len(exclude_matched_phrases) == 0:
+
                                                 if message.date.replace(tzinfo=None) >= LAST_RUN_DATE or FIRST_RUN:
                                                     await client.forward_messages(CHANNEL_CHAT_ID, message, c)
+
                                         if len(PHRASES_EXCLUDED) == 0:
                                             if message.date.replace(tzinfo=None) >= LAST_RUN_DATE or FIRST_RUN:
                                                 await client.forward_messages(CHANNEL_CHAT_ID, message, c)
