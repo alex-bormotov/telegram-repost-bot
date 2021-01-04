@@ -5,6 +5,5 @@
     "chat_id_2": -1001354667621,
     "channel_1_ebabled": "yes",
     "channel_2_ebabled": "no",
-    "enabled_filtering": "yes",
-    "sleep_timeout_seconds": 60
+    "enabled_filtering": "yes"
 }
