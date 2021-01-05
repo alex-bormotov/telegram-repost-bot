@@ -10,7 +10,7 @@
     "channel_2_ebabled": "no",
     "channel_3_ebabled": "no",
     "channel_4_ebabled": "no",
-    "channel_5_ebabled": "no",
+    "channel_5_ebabled": "yes",
     "channel_1_enabled_filtering": "yes",
     "channel_2_enabled_filtering": "yes",
     "channel_3_enabled_filtering": "yes",
