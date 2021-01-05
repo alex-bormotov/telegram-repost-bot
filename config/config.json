@@ -1,9 +1,19 @@
 {
     "app_id": 2662250,
     "app_hash": "7775e080e3dbdea48b5770b6a4e85c8e",
-    "chat_id": -1001233057797,
+    "chat_id_1": -1001233057797,
     "chat_id_2": -1001354667621,
+    "chat_id_3": -1001233057797,
+    "chat_id_4": -1001354667621,
+    "chat_id_5": -1001354667621,
     "channel_1_ebabled": "yes",
     "channel_2_ebabled": "no",
-    "enabled_filtering": "yes"
+    "channel_3_ebabled": "no",
+    "channel_4_ebabled": "no",
+    "channel_5_ebabled": "no",
+    "channel_1_enabled_filtering": "yes",
+    "channel_2_enabled_filtering": "yes",
+    "channel_3_enabled_filtering": "yes",
+    "channel_4_enabled_filtering": "yes",
+    "channel_5_enabled_filtering": "yes"
 }
