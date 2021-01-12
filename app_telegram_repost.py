@@ -115,6 +115,7 @@ async def new_start(event):
     # 1 channel
     if CHANNEL_1_ENABLED == 'yes':
         if CHANNEL_1_ENABLED_FILTERING == 'yes':
+            sentence_1 = nlp(event.message.text)
             if len(PHRASES_1) > 0:
                 matched_phrases_1 = phrase_matcher_1(sentence_1)
                 if len(matched_phrases_1) > 0:
