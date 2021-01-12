@@ -140,6 +140,7 @@ async def new_start(event):
     # 2 channel
     if CHANNEL_2_ENABLED == 'yes':
         if CHANNEL_2_ENABLED_FILTERING == 'yes':
+            sentence_2 = nlp(event.message.text)
             if len(PHRASES_2) > 0:
                 matched_phrases_2 = phrase_matcher_2(sentence_2)
                 if len(matched_phrases_2) > 0:
@@ -164,6 +165,7 @@ async def new_start(event):
     # 3 channel
     if CHANNEL_3_ENABLED == 'yes':
         if CHANNEL_3_ENABLED_FILTERING == 'yes':
+            sentence_3 = nlp(event.message.text)
             if len(PHRASES_3) > 0:
                 matched_phrases_3 = phrase_matcher_3(sentence_3)
                 if len(matched_phrases_3) > 0:
@@ -188,6 +190,7 @@ async def new_start(event):
     # 4 channel
     if CHANNEL_4_ENABLED == 'yes':
         if CHANNEL_4_ENABLED_FILTERING == 'yes':
+            sentence_4 = nlp(event.message.text)
             if len(PHRASES_4) > 0:
                 matched_phrases_4 = phrase_matcher_4(sentence_4)
                 if len(matched_phrases_4) > 0:
@@ -212,6 +215,7 @@ async def new_start(event):
     # 5 channel
     if CHANNEL_5_ENABLED == 'yes':
         if CHANNEL_5_ENABLED_FILTERING == 'yes':
+            sentence_5 = nlp(event.message.text)
             if len(PHRASES_5) > 0:
                 matched_phrases_5 = phrase_matcher_5(sentence_5)
                 if len(matched_phrases_5) > 0:
