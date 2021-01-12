@@ -6,6 +6,10 @@ from spacy.matcher import PhraseMatcher
 from telethon import TelegramClient, sync, events
 
 
+# @Postingjobot
+# 1464258088:AAHGulWTXf4fekw-Jj39Qt9HOfYCTk-EKc0
+
+
 CONFIG = read_json('config/config.json')
 CHANNELS = read_json('config/channels.json')['channels']
 PHRASES_CONFIG = read_json('config/phrases.json')
