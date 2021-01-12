@@ -9,7 +9,6 @@ from telethon import TelegramClient, sync, events
 CONFIG = read_json('config/config.json')
 CHANNELS = read_json('config/channels.json')['channels']
 PHRASES_CONFIG = read_json('config/phrases.json')
-GLOBAL_PHRASES = PHRASES_CONFIG['global_phrases']
 
 CHANNEL_1_ENABLED_FILTERING = CONFIG['channel_1_enabled_filtering'].lower()
 CHANNEL_2_ENABLED_FILTERING = CONFIG['channel_2_enabled_filtering'].lower()
@@ -48,11 +47,6 @@ client.start()
 nlp = Russian()
 
 # Phrase matchers (include)
-if len(GLOBAL_PHRASES) > 0:
-    global_phrase_matcher = PhraseMatcher(nlp.vocab, attr='LOWER')
-    global_patterns = [nlp(text_global) for text_global in GLOBAL_PHRASES]
-    global_phrase_matcher.add('AI_INC_G', None, *global_patterns)
-
 if len(PHRASES_1) > 0:
     phrase_matcher_1 = PhraseMatcher(nlp.vocab, attr='LOWER')
     patterns_1 = [nlp(text_phase_1) for text_phase_1 in PHRASES_1]
@@ -121,20 +115,9 @@ async def new_start(event):
     # 1 channel
     if CHANNEL_1_ENABLED == 'yes':
         if CHANNEL_1_ENABLED_FILTERING == 'yes':
-            sentence_1 = nlp(event.message.text)
-            global_matched_phrases_1 = global_phrase_matcher(sentence_1)
-            if len(global_matched_phrases_1) > 0:
-                if len(PHRASES_1) > 0:
-                    matched_phrases_1 = phrase_matcher_1(sentence_1)
-                    if len(matched_phrases_1) > 0:
-                        if len(PHRASES_EXCLUDED_1) > 0:
-                            exclude_matched_phrases_1 = exclude_phrase_matcher_1(
-                                sentence_1)
-                            if len(exclude_matched_phrases_1) == 0:
-                                await client.forward_messages(CHANNEL_CHAT_ID_1, event.message)
-                        if len(PHRASES_EXCLUDED_1) == 0:
-                            await client.forward_messages(CHANNEL_CHAT_ID_1, event.message)
-                if len(PHRASES_1) == 0:
+            if len(PHRASES_1) > 0:
+                matched_phrases_1 = phrase_matcher_1(sentence_1)
+                if len(matched_phrases_1) > 0:
                     if len(PHRASES_EXCLUDED_1) > 0:
                         exclude_matched_phrases_1 = exclude_phrase_matcher_1(
                             sentence_1)
@@ -142,26 +125,23 @@ async def new_start(event):
                             await client.forward_messages(CHANNEL_CHAT_ID_1, event.message)
                     if len(PHRASES_EXCLUDED_1) == 0:
                         await client.forward_messages(CHANNEL_CHAT_ID_1, event.message)
+            if len(PHRASES_1) == 0:
+                if len(PHRASES_EXCLUDED_1) > 0:
+                    exclude_matched_phrases_1 = exclude_phrase_matcher_1(
+                        sentence_1)
+                    if len(exclude_matched_phrases_1) == 0:
+                        await client.forward_messages(CHANNEL_CHAT_ID_1, event.message)
+                if len(PHRASES_EXCLUDED_1) == 0:
+                    await client.forward_messages(CHANNEL_CHAT_ID_1, event.message)
         else:
             await client.forward_messages(CHANNEL_CHAT_ID_1, event.message)
 
     # 2 channel
     if CHANNEL_2_ENABLED == 'yes':
         if CHANNEL_2_ENABLED_FILTERING == 'yes':
-            sentence_2 = nlp(event.message.text)
-            global_matched_phrases_2 = global_phrase_matcher(sentence_2)
-            if len(global_matched_phrases_2) > 0:
-                if len(PHRASES_2) > 0:
-                    matched_phrases_2 = phrase_matcher_2(sentence_2)
-                    if len(matched_phrases_2) > 0:
-                        if len(PHRASES_EXCLUDED_2) > 0:
-                            exclude_matched_phrases_2 = exclude_phrase_matcher_2(
-                                sentence_2)
-                            if len(exclude_matched_phrases_2) == 0:
-                                await client.forward_messages(CHANNEL_CHAT_ID_2, event.message)
-                        if len(PHRASES_EXCLUDED_2) == 0:
-                            await client.forward_messages(CHANNEL_CHAT_ID_2, event.message)
-                if len(PHRASES_2) == 0:
+            if len(PHRASES_2) > 0:
+                matched_phrases_2 = phrase_matcher_2(sentence_2)
+                if len(matched_phrases_2) > 0:
                     if len(PHRASES_EXCLUDED_2) > 0:
                         exclude_matched_phrases_2 = exclude_phrase_matcher_2(
                             sentence_2)
@@ -169,26 +149,23 @@ async def new_start(event):
                             await client.forward_messages(CHANNEL_CHAT_ID_2, event.message)
                     if len(PHRASES_EXCLUDED_2) == 0:
                         await client.forward_messages(CHANNEL_CHAT_ID_2, event.message)
+            if len(PHRASES_2) == 0:
+                if len(PHRASES_EXCLUDED_2) > 0:
+                    exclude_matched_phrases_2 = exclude_phrase_matcher_2(
+                        sentence_2)
+                    if len(exclude_matched_phrases_2) == 0:
+                        await client.forward_messages(CHANNEL_CHAT_ID_2, event.message)
+                if len(PHRASES_EXCLUDED_2) == 0:
+                    await client.forward_messages(CHANNEL_CHAT_ID_2, event.message)
         else:
             await client.forward_messages(CHANNEL_CHAT_ID_2, event.message)
 
     # 3 channel
     if CHANNEL_3_ENABLED == 'yes':
         if CHANNEL_3_ENABLED_FILTERING == 'yes':
-            sentence_3 = nlp(event.message.text)
-            global_matched_phrases_3 = global_phrase_matcher(sentence_3)
-            if len(global_matched_phrases_3) > 0:
-                if len(PHRASES_3) > 0:
-                    matched_phrases_3 = phrase_matcher_3(sentence_3)
-                    if len(matched_phrases_3) > 0:
-                        if len(PHRASES_EXCLUDED_3) > 0:
-                            exclude_matched_phrases_3 = exclude_phrase_matcher_3(
-                                sentence_3)
-                            if len(exclude_matched_phrases_3) == 0:
-                                await client.forward_messages(CHANNEL_CHAT_ID_3, event.message)
-                        if len(PHRASES_EXCLUDED_3) == 0:
-                            await client.forward_messages(CHANNEL_CHAT_ID_3, event.message)
-                if len(PHRASES_3) == 0:
+            if len(PHRASES_3) > 0:
+                matched_phrases_3 = phrase_matcher_3(sentence_3)
+                if len(matched_phrases_3) > 0:
                     if len(PHRASES_EXCLUDED_3) > 0:
                         exclude_matched_phrases_3 = exclude_phrase_matcher_3(
                             sentence_3)
@@ -196,26 +173,23 @@ async def new_start(event):
                             await client.forward_messages(CHANNEL_CHAT_ID_3, event.message)
                     if len(PHRASES_EXCLUDED_3) == 0:
                         await client.forward_messages(CHANNEL_CHAT_ID_3, event.message)
+            if len(PHRASES_3) == 0:
+                if len(PHRASES_EXCLUDED_3) > 0:
+                    exclude_matched_phrases_3 = exclude_phrase_matcher_3(
+                        sentence_3)
+                    if len(exclude_matched_phrases_3) == 0:
+                        await client.forward_messages(CHANNEL_CHAT_ID_3, event.message)
+                if len(PHRASES_EXCLUDED_3) == 0:
+                    await client.forward_messages(CHANNEL_CHAT_ID_3, event.message)
         else:
             await client.forward_messages(CHANNEL_CHAT_ID_3, event.message)
 
     # 4 channel
     if CHANNEL_4_ENABLED == 'yes':
         if CHANNEL_4_ENABLED_FILTERING == 'yes':
-            sentence_4 = nlp(event.message.text)
-            global_matched_phrases_4 = global_phrase_matcher(sentence_4)
-            if len(global_matched_phrases_4) > 0:
-                if len(PHRASES_4) > 0:
-                    matched_phrases_4 = phrase_matcher_4(sentence_4)
-                    if len(matched_phrases_4) > 0:
-                        if len(PHRASES_EXCLUDED_4) > 0:
-                            exclude_matched_phrases_4 = exclude_phrase_matcher_4(
-                                sentence_4)
-                            if len(exclude_matched_phrases_4) == 0:
-                                await client.forward_messages(CHANNEL_CHAT_ID_4, event.message)
-                        if len(PHRASES_EXCLUDED_4) == 0:
-                            await client.forward_messages(CHANNEL_CHAT_ID_4, event.message)
-                if len(PHRASES_4) == 0:
+            if len(PHRASES_4) > 0:
+                matched_phrases_4 = phrase_matcher_4(sentence_4)
+                if len(matched_phrases_4) > 0:
                     if len(PHRASES_EXCLUDED_4) > 0:
                         exclude_matched_phrases_4 = exclude_phrase_matcher_4(
                             sentence_4)
@@ -223,26 +197,23 @@ async def new_start(event):
                             await client.forward_messages(CHANNEL_CHAT_ID_4, event.message)
                     if len(PHRASES_EXCLUDED_4) == 0:
                         await client.forward_messages(CHANNEL_CHAT_ID_4, event.message)
+            if len(PHRASES_4) == 0:
+                if len(PHRASES_EXCLUDED_4) > 0:
+                    exclude_matched_phrases_4 = exclude_phrase_matcher_4(
+                        sentence_4)
+                    if len(exclude_matched_phrases_4) == 0:
+                        await client.forward_messages(CHANNEL_CHAT_ID_4, event.message)
+                if len(PHRASES_EXCLUDED_4) == 0:
+                    await client.forward_messages(CHANNEL_CHAT_ID_4, event.message)
         else:
             await client.forward_messages(CHANNEL_CHAT_ID_4, event.message)
 
     # 5 channel
     if CHANNEL_5_ENABLED == 'yes':
         if CHANNEL_5_ENABLED_FILTERING == 'yes':
-            sentence_5 = nlp(event.message.text)
-            global_matched_phrases_5 = global_phrase_matcher(sentence_5)
-            if len(global_matched_phrases_5) > 0:
-                if len(PHRASES_5) > 0:
-                    matched_phrases_5 = phrase_matcher_5(sentence_5)
-                    if len(matched_phrases_5) > 0:
-                        if len(PHRASES_EXCLUDED_5) > 0:
-                            exclude_matched_phrases_5 = exclude_phrase_matcher_5(
-                                sentence_5)
-                            if len(exclude_matched_phrases_5) == 0:
-                                await client.forward_messages(CHANNEL_CHAT_ID_5, event.message)
-                        if len(PHRASES_EXCLUDED_5) == 0:
-                            await client.forward_messages(CHANNEL_CHAT_ID_5, event.message)
-                if len(PHRASES_5) == 0:
+            if len(PHRASES_5) > 0:
+                matched_phrases_5 = phrase_matcher_5(sentence_5)
+                if len(matched_phrases_5) > 0:
                     if len(PHRASES_EXCLUDED_5) > 0:
                         exclude_matched_phrases_5 = exclude_phrase_matcher_5(
                             sentence_5)
@@ -250,6 +221,14 @@ async def new_start(event):
                             await client.forward_messages(CHANNEL_CHAT_ID_5, event.message)
                     if len(PHRASES_EXCLUDED_5) == 0:
                         await client.forward_messages(CHANNEL_CHAT_ID_5, event.message)
+            if len(PHRASES_5) == 0:
+                if len(PHRASES_EXCLUDED_5) > 0:
+                    exclude_matched_phrases_5 = exclude_phrase_matcher_5(
+                        sentence_5)
+                    if len(exclude_matched_phrases_5) == 0:
+                        await client.forward_messages(CHANNEL_CHAT_ID_5, event.message)
+                if len(PHRASES_EXCLUDED_5) == 0:
+                    await client.forward_messages(CHANNEL_CHAT_ID_5, event.message)
         else:
             await client.forward_messages(CHANNEL_CHAT_ID_5, event.message)
 
