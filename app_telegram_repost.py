@@ -45,9 +45,7 @@ matcher_2_1.add('AI_INC_2_1', None, *
 async def new_start(event):
     try:
         # print(event.message.text)
-
         if CHANNEL_1_ENABLED_FILTERING == 'yes':
-
             sentence_1 = nlp(event.message.text)
 
             matched_1 = matcher_1(sentence_1)
@@ -57,13 +55,11 @@ async def new_start(event):
             condition_1 = len(matched_1) != 0
             condition_2 = len(matched_2) != 0 and len(matched_2_1) != 0
 
-            print(len(matched_1), len(matched_2), len(matched_2_1))
-            print(condition_1, condition_2)
+            # print(len(matched_1), len(matched_2), len(matched_2_1))
+            # print(condition_1, condition_2)
 
             if condition_1 or condition_2:
-
-                print(event.message.text)
-
+                # print(event.message.text)
                 await client.forward_messages(CHANNEL_CHAT_ID_1, event.message)
 
         else:
